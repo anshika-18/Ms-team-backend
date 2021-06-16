@@ -25,24 +25,29 @@ const io=new Server(server,{
 
 const Room=require('./room')
 
+
 const socketToPeerHashMap={} 
 
-io.on('connection',(socket)=>{
+io.on('connect',(socket)=>{
     socket.emit('get:peerId')
+    console.log('connected')
 
     socket.on('send:peerId',(peerId)=>{
+        //console.log('lets see if it is set--',peerId)
         socketToPeerHashMap[socket.id]=peerId
-    })
+    }) 
 
-    io.on('disconnected',()=>{
+    socket.on('disconnect',()=>{
+        console.log('disconnect')
         const peerId=socketToPeerHashMap[socket.id]
+        console.log(peerId)
         io.emit("user:left",peerId)
     })
  
-    
+     
 })
 
-const rooms=[]
+const rooms=[] 
 
 app.post('/rooms',(req,res)=>{
     const newRoom=new Room(req.body.author)
@@ -60,6 +65,7 @@ app.get('/rooms/:roomId',(req,res)=>{
 app.post('/rooms/:roomId/join',(req,res)=>{
     const room =rooms.find((existingRoom)=>existingRoom.roomId===req.params.roomId)
     room.addParticipants(req.body.participant);
+    //console.log(req.body.participant)
     res.json({...room})
 })
 
