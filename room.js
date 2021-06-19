@@ -4,7 +4,7 @@ class Room {
     participants=[]
     roomId=null
     author=null
-
+    
     constructor(author)
     {
         this.roomId=v4();

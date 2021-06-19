@@ -14,9 +14,7 @@ app.get('/',(req,res)=>{
 })
 
 const {Server} =require('socket.io')
-
 const server=http.createServer(app)
-
 const io=new Server(server,{
     cors:{
         origin:'*'
@@ -24,7 +22,6 @@ const io=new Server(server,{
 })
 
 const Room=require('./room')
-
 
 const socketToPeerHashMap={} 
 
@@ -36,6 +33,12 @@ io.on('connect',(socket)=>{
         //console.log('lets see if it is set--',peerId)
         socketToPeerHashMap[socket.id]=peerId
     }) 
+    //console.log('hellll')
+
+    socket.on('send-message',(message)=>{
+        console.log(message)
+        socket.broadcast.emit('recieve-message',message)
+    })
 
     socket.on('disconnect',()=>{
         console.log('disconnect')
@@ -43,8 +46,7 @@ io.on('connect',(socket)=>{
         console.log(peerId)
         io.emit("user:left",peerId)
     })
- 
-     
+      
 })
 
 const rooms=[] 
@@ -68,6 +70,7 @@ app.post('/rooms/:roomId/join',(req,res)=>{
     //console.log(req.body.participant)
     res.json({...room})
 })
+
 
 const PORT=process.env.PORT||5000;
 server.listen(PORT,()=>{
