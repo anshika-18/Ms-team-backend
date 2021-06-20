@@ -35,9 +35,9 @@ io.on('connect',(socket)=>{
     }) 
     //console.log('hellll')
 
-    socket.on('send-message',(message)=>{
+    socket.on('send-message',(message,roomId)=>{
         console.log(message)
-        socket.broadcast.emit('recieve-message',message)
+        socket.broadcast.emit('recieve-message',message,roomId)
     })
 
     socket.on('disconnect',()=>{
