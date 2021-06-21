@@ -1,11 +1,13 @@
+require('dotenv').config()
 const http=require('http')
 const express=require('express')
 
 const bodyParser=require('body-parser')
 const cors=require('cors')
 
+const nodemailer=require('nodemailer')
 const app=express()
-
+const mongoose=require('mongoose')
 app.use(bodyParser.json())
 app.use(cors())
 
@@ -40,7 +42,7 @@ io.on('connect',(socket)=>{
         socket.broadcast.emit('recieve-message',message,roomId)
     })
 
-    socket.on('disconnect',()=>{
+    socket.on('disconnect',()=>{ 
         console.log('disconnect')
         const peerId=socketToPeerHashMap[socket.id]
         console.log(peerId)
@@ -50,6 +52,16 @@ io.on('connect',(socket)=>{
 })
 
 const rooms=[] 
+
+mongoose.connect(process.env.MONGO_URL,{ useUnifiedTopology: true,useNewUrlParser:true })
+        .then(()=>{
+            console.log('database connected')
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+
+require('./auth/authRoutes')(app)
 
 app.post('/rooms',(req,res)=>{
     const newRoom=new Room(req.body.author)
@@ -69,6 +81,46 @@ app.post('/rooms/:roomId/join',(req,res)=>{
     room.addParticipants(req.body.participant);
     //console.log(req.body.participant)
     res.json({...room})
+})
+
+app.post('/api/send',(req,res)=>{
+
+    let transporter=nodemailer.createTransport({
+        host:'smtp.gmail.com',
+        port:465,
+        secure:true,
+        service:'gmail',
+        auth:{
+            user:'anshika.website@gmail.com',
+            pass:process.env.pass
+        }
+    })
+    //console.log(req.body)    
+
+    var to=req.body.to.split(',');
+    //console.log(to)
+
+    for(var i=0;i<to.length;i++)
+    {
+        var options={
+            to:to[i].trim(),
+            subject:"Link for meeting",
+            html:"<h3>Joining Link for meeting is </h3>"+"<h3 style='font-weight:bold'>"+req.body.url+"</h3>"
+        }
+
+        transporter.sendMail(options,(error,info)=>{
+            if(error)
+            {
+                return console.log(error)
+            }
+            console.log('Message sent : %s',info.messageId);
+            console.log('Preview URL: %s',nodemailer.getTestMessageUrl(info));
+            console.log('link sent')
+        })
+    }
+
+    res.json('successfull')
+
 })
 
 
