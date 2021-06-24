@@ -4,15 +4,15 @@ class Room {
     participants=[]
     roomId=null
     author=null
-    
+
     constructor(author)
     {
         this.roomId=v4();
         this.author=author
     }
 
-    addParticipants=(participantId)=>{
-        this.participants.push(participantId)
+    addParticipants=(participant)=>{
+        this.participants.push(participant)
     }
 
     removeParticipants=(participantId)=>{

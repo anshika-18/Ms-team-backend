@@ -33,14 +33,19 @@ io.on('connect',(socket)=>{
 
     socket.on('send:peerId',(peerId)=>{
         //console.log('lets see if it is set--',peerId)
-        socketToPeerHashMap[socket.id]=peerId
-    }) 
-    //console.log('hellll')
+        socketToPeerHashMap[socket.id]=peerId;
 
+    }) 
+    
     socket.on('send-message',(message,roomId)=>{
         console.log(message)
         socket.broadcast.emit('recieve-message',message,roomId)
     })
+
+    socket.on('stopping-screen-share',(roomId)=>{
+        socket.broadcast.emit('stop-sharing',roomId)
+    })
+
 
     socket.on('disconnect',()=>{ 
         console.log('disconnect')
@@ -79,7 +84,7 @@ app.get('/rooms/:roomId',(req,res)=>{
 app.post('/rooms/:roomId/join',(req,res)=>{
     const room =rooms.find((existingRoom)=>existingRoom.roomId===req.params.roomId)
     room.addParticipants(req.body.participant);
-    //console.log(req.body.participant)
+    console.log(req.body.participant)
     res.json({...room})
 })
 
@@ -91,7 +96,7 @@ app.post('/api/send',(req,res)=>{
         secure:true,
         service:'gmail',
         auth:{
-            user:'anshika.website@gmail.com',
+            user:process.env.user,
             pass:process.env.pass
         }
     })
@@ -123,6 +128,18 @@ app.post('/api/send',(req,res)=>{
 
 })
 
+
+app.post('/api/getname',(req,res)=>{
+    console.log('getname - - ',req.body)
+    const room =rooms.find((existingRoom)=>existingRoom.roomId===req.body.roomId)
+    for(let i=0;i<room.participants.length;i++)
+    {
+        if(room.participants[i].id===req.body.id)
+        {
+            return res.json(room.participants[i].name)
+        }
+    }
+})
 
 const PORT=process.env.PORT||5000;
 server.listen(PORT,()=>{

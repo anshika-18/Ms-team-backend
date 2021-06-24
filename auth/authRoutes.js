@@ -75,6 +75,7 @@ module.exports=(app)=>{
 
     //login to ms-team
     app.post('/api/auth/login',(req,res)=>{
+        console.log(req.body)
         const {email,password}=req.body
         if(!email||!password)
         {
