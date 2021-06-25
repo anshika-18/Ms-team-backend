@@ -37,9 +37,9 @@ io.on('connect',(socket)=>{
 
     }) 
     
-    socket.on('send-message',(message,roomId)=>{
+    socket.on('send-message',(message,roomId,name)=>{
         console.log(message)
-        socket.broadcast.emit('recieve-message',message,roomId)
+        socket.broadcast.emit('recieve-message',message,roomId,name)
     })
 
     socket.on('stopping-screen-share',(roomId)=>{
