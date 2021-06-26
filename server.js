@@ -26,7 +26,7 @@ const io=new Server(server,{
 const Room=require('./room')
 
 const socketToPeerHashMap={} 
-
+const rooms=[] 
 io.on('connect',(socket)=>{
     socket.emit('get:peerId')
     console.log('connected')
@@ -45,18 +45,47 @@ io.on('connect',(socket)=>{
     socket.on('stopping-screen-share',(roomId)=>{
         socket.broadcast.emit('stop-sharing',roomId)
     })
+ 
+    socket.on('raise-hand',(name,roomId)=>{
+        console.log(name)
+        socket.broadcast.emit('hand-raised',name,roomId)
+    })
 
+    socket.on('lower-hand',(name,roomId)=>{
+        console.log(name)
+        socket.broadcast.emit('hand-lowered',name,roomId)
+    })
 
     socket.on('disconnect',()=>{ 
         console.log('disconnect')
         const peerId=socketToPeerHashMap[socket.id]
         console.log(peerId)
         io.emit("user:left",peerId)
+        console.log(rooms)
+        //const roomIndex = rooms.findIndex(existingRoom =>{ existingRoom.participants.includes(peerId)});
+        let roomIndex=-1;
+        for(var i=0;i<rooms.length;i++)
+        {
+            let existingRoom=rooms[i]
+            for(var j=0;j<existingRoom.participants.length;j++)
+            {
+                if(existingRoom.participants[j].id===peerId)
+                {
+                    roomIndex=i;
+                }
+            }
+        }
+        //console.log('room Index is - ',roomIndex)
+            if (roomIndex > -1) {
+                let room = rooms[roomIndex]
+                room.removeParticipants(peerId);
+                rooms[roomIndex] = room
+            }
     })
       
 })
 
-const rooms=[] 
+
 
 mongoose.connect(process.env.MONGO_URL,{ useUnifiedTopology: true,useNewUrlParser:true })
         .then(()=>{
@@ -82,10 +111,19 @@ app.get('/rooms/:roomId',(req,res)=>{
 })
 
 app.post('/rooms/:roomId/join',(req,res)=>{
-    const room =rooms.find((existingRoom)=>existingRoom.roomId===req.params.roomId)
-    room.addParticipants(req.body.participant);
-    console.log(req.body.participant)
-    res.json({...room})
+
+    const { params, body } = req;
+    const roomIndex = rooms.findIndex(existingRooms => existingRooms.roomId === params.roomId);
+    let room = null;
+    //console.log('room index - ',roomIndex)
+    if (roomIndex > -1) {
+        room = rooms[roomIndex]
+        room.addParticipants(body.participant);
+        rooms[roomIndex] = room
+    }
+    //console.log('room - ',rooms)
+
+    res.json({ ...room.getInfo() })
 })
 
 app.post('/api/send',(req,res)=>{
