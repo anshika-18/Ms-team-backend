@@ -1,3 +1,5 @@
+const nodemailer=require('nodemailer')
+
 module.exports=(app,rooms)=>{
 
     const Room=require('../room')
