@@ -2,12 +2,14 @@ const nodemailer=require('nodemailer')
 
 module.exports=(app,rooms)=>{
 
+    //Room class
     const Room=require('../room')
 
     app.get('/',(req,res)=>{
         res.send('Hello World ..!!!')
     })
 
+    //create room
     app.post('/rooms',(req,res)=>{
         const newRoom=new Room(req.body.author)
         rooms.push(newRoom)
@@ -16,11 +18,13 @@ module.exports=(app,rooms)=>{
         })
     })
     
+    //get details of room
     app.get('/rooms/:roomId',(req,res)=>{
         const room =rooms.find((existingRoom)=>existingRoom.roomId===req.params.roomId)
         res.json({...room})
     })
     
+    //join room (find room details using room ID and add participant)
     app.post('/rooms/:roomId/join',(req,res)=>{
         const { params, body } = req;
         const roomIndex = rooms.findIndex(existingRooms => existingRooms.roomId === params.roomId);
@@ -33,7 +37,8 @@ module.exports=(app,rooms)=>{
         }
         res.json({ ...room.getInfo() })
     })
-    
+
+    //send email to list of participants
     app.post('/api/send',(req,res)=>{
     
         let transporter=nodemailer.createTransport({
@@ -56,7 +61,7 @@ module.exports=(app,rooms)=>{
             var options={
                 to:to[i].trim(),
                 subject:"Link for meeting",
-                html:"<h3>Joining Link for meeting is </h3>"+"<h3 style='font-weight:bold'>"+req.body.url+"</h3>"
+                html:"<h2>"+req.body.from+"</h2><h3> sent you Joining Link for meeting </h3>"+"<h3 style='font-weight:bold'>"+req.body.url+"</h3>"
             }
     
             transporter.sendMail(options,(error,info)=>{
@@ -74,7 +79,7 @@ module.exports=(app,rooms)=>{
     
     })
     
-    
+    //get name of user with given peer Id
     app.post('/api/getname',(req,res)=>{
         console.log('getname - - ',req.body)
         const room =rooms.find((existingRoom)=>existingRoom.roomId===req.body.roomId)

@@ -18,9 +18,12 @@ const io=new Server(server,{
     }
 })
 
-
+//store peerId and socketId
 const MapPeerIdWithSocket={} 
+
+//store objects of Room
 const rooms=[] 
+
 
 io.on('connect',(socket)=>{
     socket.emit('get:peerId')
@@ -33,30 +36,34 @@ io.on('connect',(socket)=>{
     }) 
     
     socket.on('send-message',(message,roomId,name)=>{
-        console.log(message)
+        //console.log(message)
         socket.broadcast.emit('recieve-message',message,roomId,name)
     })
 
+    //sharer stopped sharing screen to be signaled to everyone
     socket.on('stopping-screen-share',(roomId)=>{
         socket.broadcast.emit('stop-sharing',roomId)
     })
  
+    //someone raised hand
     socket.on('raise-hand',(name,roomId)=>{
         console.log(name)
         socket.broadcast.emit('hand-raised',name,roomId)
     })
 
+    //someone lowered hand
     socket.on('lower-hand',(name,roomId)=>{
         console.log(name)
         socket.broadcast.emit('hand-lowered',name,roomId)
     })
 
+    //disconnected
     socket.on('disconnect',()=>{ 
         //console.log('disconnect')
         const peerId=MapPeerIdWithSocket[socket.id]
         //console.log(peerId)
         io.emit("user:left",peerId)
-        let roomIndex=-1;
+        let index=-1;
         for(var i=0;i<rooms.length;i++)
         {
             let existingRoom=rooms[i]
@@ -64,15 +71,15 @@ io.on('connect',(socket)=>{
             {
                 if(existingRoom.participants[j].id===peerId)
                 {
-                    roomIndex=i;
+                    index=i;
                 }
             }
         }
-        //console.log('room Index is - ',roomIndex)
-            if (roomIndex > -1) {
-                let room = rooms[roomIndex]
+        //console.log('room Index is - ',index)
+            if (index > -1) {
+                let room = rooms[index]
                 room.removeParticipants(peerId);
-                rooms[roomIndex] = room
+                rooms[index] = room
             }
     })
       
@@ -91,6 +98,7 @@ mongoose.connect(process.env.MONGO_URL,{ useUnifiedTopology: true,useNewUrlParse
 require('./auth/authRoutes')(app)
 require('./api/join')(app,rooms)
 
+//run server
 const PORT=process.env.PORT||5000;
 server.listen(PORT,()=>{
     console.log("server is live ")

@@ -1,6 +1,7 @@
 const mongoose=require('mongoose')
 const Schema=mongoose.Schema
 
+//mongoose schema for user register
 const userSchema = new Schema({
     name:{
         type:String,

@@ -11,19 +11,19 @@ class Room {
         this.author=author
     }
 
+    //add a participant
     addParticipants=(participant)=>{
         this.participants.push(participant)
     }
 
     removeParticipants=(participantId)=>{
         console.log('remove')
-        let index=this.participants.findIndex(
+        let i=this.participants.findIndex(
             (existingParticipantId)=>existingParticipantId.id===participantId
         )
-        //console.log('before-',this.participants)
-        if(index>-1)
+        if(i>-1)
         {
-            this.participants.splice(index,1)
+            this.participants.splice(i,1)
             //console.log(this.participants)
         }
     }
