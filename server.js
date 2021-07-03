@@ -59,7 +59,6 @@ io.on('connect',(socket)=>{
         socket.broadcast.emit('hand-lowered',name,roomId)
     })
 
-
     //disconnected
     socket.on('disconnect',()=>{ 
         //console.log('disconnect')
