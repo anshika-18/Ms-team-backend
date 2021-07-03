@@ -25,6 +25,8 @@ const MapPeerIdWithSocket={}
 const rooms=[] 
 
 
+
+
 io.on('connect',(socket)=>{
     socket.emit('get:peerId')
     console.log('connected')
@@ -56,6 +58,7 @@ io.on('connect',(socket)=>{
         console.log(name)
         socket.broadcast.emit('hand-lowered',name,roomId)
     })
+
 
     //disconnected
     socket.on('disconnect',()=>{ 
@@ -97,6 +100,7 @@ mongoose.connect(process.env.MONGO_URL,{ useUnifiedTopology: true,useNewUrlParse
 //api's
 require('./auth/authRoutes')(app)
 require('./api/join')(app,rooms)
+require('./auth/otpRoutes')(app)
 
 //run server
 const PORT=process.env.PORT||5000;

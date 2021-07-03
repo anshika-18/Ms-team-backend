@@ -4,6 +4,7 @@ class Room {
     participants=[]
     roomId=null
     author=null
+    sharer=null
 
     constructor(author)
     {
