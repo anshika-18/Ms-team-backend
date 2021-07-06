@@ -11,7 +11,9 @@ module.exports=(app,rooms)=>{
 
     //create room
     app.post('/rooms',(req,res)=>{
-        const newRoom=new Room(req.body.author)
+        console.log(req.body)
+        const newRoom=new Room(req.body)
+        console.log(newRoom)
         rooms.push(newRoom)
         res.json({
             roomId:newRoom.roomId
@@ -29,15 +31,48 @@ module.exports=(app,rooms)=>{
         const { params, body } = req;
         const roomIndex = rooms.findIndex(existingRooms => existingRooms.roomId === params.roomId);
         let room = null;
-        
+        console.log('roomIndex = ',roomIndex)
+        console.log(req.body)
         if (roomIndex > -1) {
             room = rooms[roomIndex]
             room.addParticipants(body.participant);
-            rooms[roomIndex] = room
+            rooms[roomIndex] = room;
+            console.log(room.getInfo())
+            res.json({ ...room.getInfo() })
         }
-        res.json({ ...room.getInfo() })
-    })
+        /*
+        else
+        {
+            const newRoom=new Room(req.body.participant.name)
+            newRoom.addParticipants(body.data);
+            rooms.push(newRoom)
+            res.json({ ...newRoom.getInfo() })
+        }*/
 
+    }) 
+
+    app.post('/joinRoom/:roomId',(req,res)=>{
+        console.log(req.body)
+        const { params, body } = req;
+        const roomIndex = rooms.findIndex(existingRooms => existingRooms.roomId === params.roomId);
+        let room = null;
+        if(roomIndex>-1)
+        {
+            room = rooms[roomIndex]
+            room.addParticipants(body.data);
+            rooms[roomIndex] = room;
+            res.json({ ...room.getInfo() })
+        }
+        else
+        {
+            const newRoom=new Room(req.body.author)
+            newRoom.addParticipants(body.data);
+            rooms.push(newRoom)
+            res.json({
+                roomId:newRoom.roomId
+            })
+        }
+    })
     //send email to list of participants
     app.post('/api/send',(req,res)=>{
     

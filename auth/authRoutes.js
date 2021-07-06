@@ -29,7 +29,7 @@ module.exports=(app)=>{
                         {
                             return  res.status(400).json({msg:"Invalid User"})
                         }
-                        //genertae jwt token
+                        
                         
                         res.json({
                             user:{

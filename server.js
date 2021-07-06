@@ -11,6 +11,7 @@ app.use(cors())
 
 
 const {Server} =require('socket.io')
+const { O_APPEND } = require('constants')
 const server=http.createServer(app)
 const io=new Server(server,{
     cors:{
@@ -36,7 +37,18 @@ io.on('connect',(socket)=>{
         MapPeerIdWithSocket[socket.id]=peerId;
 
     }) 
-    
+
+    socket.on('join-room',(roomId)=>{
+        socket.join(roomId)
+    })
+
+    socket.on('send',(data)=>{
+        console.log('message sent-',data)
+        socket.broadcast.emit('recieve-mess',data)
+    })
+
+
+
     socket.on('send-message',(message,roomId,name)=>{
         //console.log(message)
         socket.broadcast.emit('recieve-message',message,roomId,name)
@@ -100,6 +112,9 @@ mongoose.connect(process.env.MONGO_URL,{ useUnifiedTopology: true,useNewUrlParse
 require('./auth/authRoutes')(app)
 require('./api/join')(app,rooms)
 require('./auth/otpRoutes')(app)
+require('./feedback/route')(app)
+require('./chat/chatRoutes')(app)
+require('./chat/userRoutes')(app)
 
 //run server
 const PORT=process.env.PORT||5000;
