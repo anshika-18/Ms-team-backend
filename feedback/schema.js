@@ -1,7 +1,6 @@
 const mongoose=require('mongoose')
-const Schema=mongoose.Schema
 
-const feedbackSchema=new Schema({
+const feedback=new mongoose.Schema({
         email:{
                 type:String
         },
@@ -10,4 +9,4 @@ const feedbackSchema=new Schema({
         }
 })
 
-module.exports=mongoose.model('feedback',feedbackSchema)
+module.exports=mongoose.model('feedback',feedback)

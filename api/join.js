@@ -1,12 +1,12 @@
 const nodemailer=require('nodemailer')
-
+const transporter=require('../transporter')
 module.exports=(app,rooms)=>{
 
     //Room class
     const Room=require('../room')
 
     app.get('/',(req,res)=>{
-        res.send('Hello World ..!!!')
+        res.send('Welcome to Microsoft Teams ..!!!')
     })
 
     //create room
@@ -40,17 +40,10 @@ module.exports=(app,rooms)=>{
             console.log(room.getInfo())
             res.json({ ...room.getInfo() })
         }
-        /*
-        else
-        {
-            const newRoom=new Room(req.body.participant.name)
-            newRoom.addParticipants(body.data);
-            rooms.push(newRoom)
-            res.json({ ...newRoom.getInfo() })
-        }*/
 
     }) 
 
+    //join room from your teams
     app.post('/joinRoom/:roomId',(req,res)=>{
         console.log(req.body)
         const { params, body } = req;
@@ -73,23 +66,11 @@ module.exports=(app,rooms)=>{
             })
         }
     })
+
     //send email to list of participants
     app.post('/api/send',(req,res)=>{
     
-        let transporter=nodemailer.createTransport({
-            host:'smtp.gmail.com',
-            port:465,
-            secure:true,
-            service:'gmail',
-            auth:{
-                user:process.env.user,
-                pass:process.env.pass
-            }
-        })
-        //console.log(req.body)    
-    
         var to=req.body.to.split(',');
-        //console.log(to)
     
         for(var i=0;i<to.length;i++)
         {
@@ -98,7 +79,6 @@ module.exports=(app,rooms)=>{
                 subject:"Link for meeting",
                 html:"<h2>"+req.body.from+"</h2><h3> sent you Joining Link for meeting </h3>"+"<h3 style='font-weight:bold'>"+req.body.url+"</h3>"
             }
-    
             transporter.sendMail(options,(error,info)=>{
                 if(error)
                 {
@@ -109,21 +89,16 @@ module.exports=(app,rooms)=>{
                 console.log('link sent')
             })
         }
-    
-        res.json('successfull')
-    
+        return res.json('Mail sent successfully')
     })
     
     //get name of user with given peer Id
     app.post('/api/getname',(req,res)=>{
-        console.log('getname - - ',req.body)
         const room =rooms.find((existingRoom)=>existingRoom.roomId===req.body.roomId)
         for(let i=0;i<room.participants.length;i++)
         {
             if(room.participants[i].id===req.body.id)
-            {
-                return res.json(room.participants[i].name)
-            }
+                return res.status(200).json(room.participants[i].name)
         }
     })
     

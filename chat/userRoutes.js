@@ -3,8 +3,10 @@ const Participant=require('./userSchema')
 
 module.exports=(app)=>{
 
+    //create new room
     app.post('/createRoom',(req,res)=>{
         const {email,roomId,roomname,name}=req.body
+        //create 
         const user=new Room({
             roomId,
             name:roomname,
@@ -16,6 +18,7 @@ module.exports=(app)=>{
         })
         user.save()
             .then(data=>{
+                //check if participant who created this room is a new one
                 Participant.findOne({email})
                         .then((data)=>{
                             if(data)
@@ -34,6 +37,7 @@ module.exports=(app)=>{
                             }
                             else
                             {
+                                 //if new then add this user to participant array
                                 const newParti=new Participant({
                                     name,
                                     email,
@@ -78,7 +82,6 @@ module.exports=(app)=>{
                             })
                             user.save()
                                 .then(data=>{
-                                   //res.status(200).json(data)
                                     room.participants.push({
                                         email
                                     })

@@ -102,16 +102,16 @@ io.on('connect',(socket)=>{
 //connect to mongoDb
 mongoose.connect(process.env.MONGO_URL,{ useUnifiedTopology: true,useNewUrlParser:true })
     .then(()=>{
-        console.log('database connected')
+        console.log('database is connected')
     })
     .catch(error=>{
         console.log(error)
 })
 
 //api's
-require('./auth/authRoutes')(app)
+require('./auth/loginRoutes')(app)
 require('./api/join')(app,rooms)
-require('./auth/otpRoutes')(app)
+require('./auth/registerRoutes')(app)
 require('./feedback/route')(app)
 require('./chat/chatRoutes')(app)
 require('./chat/userRoutes')(app)
@@ -119,6 +119,6 @@ require('./chat/userRoutes')(app)
 //run server
 const PORT=process.env.PORT||5000;
 server.listen(PORT,()=>{
-    console.log("server is live ")
+    console.log("server is running at port",PORT)
 })
 

@@ -9,16 +9,11 @@ class Room {
     constructor(body)
     {
         if(body.roomId)
-        {
             this.roomId=body.roomId
-        }
         else
-        {
             this.roomId=v4();
-        }
         this.author=body.author
     }
-
 
     //add a participant
     addParticipants=(participant)=>{
@@ -31,10 +26,7 @@ class Room {
             (existingParticipantId)=>existingParticipantId.id===participantId
         )
         if(i>-1)
-        {
             this.participants.splice(i,1)
-            //console.log(this.participants)
-        }
     }
 
     getInfo = () => ({

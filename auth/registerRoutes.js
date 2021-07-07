@@ -2,19 +2,10 @@ require('dotenv').config()
 const nodemailer=require('nodemailer')
 const User=require('./userModel')
 const bcrypt=require('bcryptjs')
+const transporter=require('../transporter')
 
 module.exports=(app)=>{
         var email;
-        let transporter=nodemailer.createTransport({
-            host:"smtp.gmail.com",
-            port:465,
-            secure:true,
-            service:'gmail',
-            auth:{
-                user:process.env.user,
-                pass:process.env.pass
-            }
-        })
     
         var otp=Math.random();
         otp=otp*10000;
