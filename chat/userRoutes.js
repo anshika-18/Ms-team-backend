@@ -12,7 +12,8 @@ module.exports=(app)=>{
             name:roomname,
             participants:[
                 {
-                    email
+                    email,
+                    name
                 }
             ]
         })
@@ -83,7 +84,8 @@ module.exports=(app)=>{
                             user.save()
                                 .then(data=>{
                                     room.participants.push({
-                                        email
+                                        email,
+                                        name
                                     })
                                     room.save()
                                         .then(success=>{
@@ -116,7 +118,8 @@ module.exports=(app)=>{
                             data.save()
                                 .then(participant=>{
                                     room.participants.push({
-                                        email
+                                        email,
+                                        name
                                     })
                                     room.save()
                                         .then(success=>{

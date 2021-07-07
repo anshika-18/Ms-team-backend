@@ -10,6 +10,9 @@ const roomSchema=new mongoose.Schema({
     participants:[{
             email:{
                 type:String
+            },
+            name:{
+                type:String
             }
     }]
 })
