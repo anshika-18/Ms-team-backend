@@ -1,17 +1,19 @@
 require('dotenv').config()
 const nodemailer=require('nodemailer')
-const User=require('./userModel')
+const User=require('./model')
 const bcrypt=require('bcryptjs')
 const transporter=require('../transporter')
 
 module.exports=(app)=>{
         var email;
     
+        //OTP
         var otp=Math.random();
         otp=otp*10000;
         otp=parseInt(otp);
         console.log(otp)
 
+        //send otp 
         app.post("/sendOtp",(req,res)=>{
         
                 email=req.body.email;
@@ -61,22 +63,24 @@ module.exports=(app)=>{
         
         //register to ms-team
         app.post('/api/auth/register',(req,res)=>{
+            console.log(req.body)
         const {name,email,password}=req.body
 
+        //check if all details are provided
         if(!name||!email||!password)
-        {
-            return res.status(400).json({msg:'Please enter all details ...'})
-        }
+            return res.status(404).json({msg:'Please enter all details ...'})
         
+        //verify otp
         if(req.body.otp==otp)
         {
             console.log('matches');
-        //find if user already registered
-        User.findOne({email})
+        
+            //find if user already registered
+            User.findOne({email})
             .then(user=>{
                 if(user)
                 {
-                    return res.status(400).json({msg:'user already exist. You can login to proceed..'})
+                    return res.status(401).json({msg:'user already exist. You can login to proceed..'})
                 }
                 else
                 {
@@ -86,7 +90,7 @@ module.exports=(app)=>{
                         .then(username=>{
                             if(username)
                             {
-                                return res.status(400).json({msg:'username already taken'})
+                                return res.status(401).json({msg:'username already taken'})
                             }
                             else
                             {
@@ -100,22 +104,21 @@ module.exports=(app)=>{
                                 bcrypt.genSalt(10,(err,salt)=>{
                                     bcrypt.hash(newUser.password,salt,(err,hash)=>{
                                         if(err) throw err;
-            
                                         newUser.password=hash;
             
-                                        //generate token
+                                        //save new user
                                         newUser.save()
-                                            .then(user=>{
+                                            .then(data=>{
                                                 res.json({
                                                    user:{
-                                                     id:user.id,
-                                                     name:user.name,
-                                                     email:user.email
+                                                     id:data.id,
+                                                     name:data.name,
+                                                     email:data.email
                                                   }
                                                 })                                                                                                   
                                             })
                                             .catch(err=>{
-                                                return res.status(500).json(err)
+                                                return res.status(404).json(err)
                                             })
                                     })
                                 })
@@ -126,7 +129,7 @@ module.exports=(app)=>{
                 }
             })
             .catch(err=>{
-                return res.status(500).json(err)
+                return res.status(404).json(err)
             })
         
         }

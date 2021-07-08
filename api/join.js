@@ -9,7 +9,7 @@ module.exports=(app,rooms)=>{
         res.send('Welcome to Microsoft Teams ..!!!')
     })
 
-    //create room
+    //create room for video call
     app.post('/rooms',(req,res)=>{
         console.log(req.body)
         const newRoom=new Room(req.body)
@@ -20,13 +20,13 @@ module.exports=(app,rooms)=>{
         })
     })
     
-    //get details of room
+    //get details of room (roomId)
     app.get('/rooms/:roomId',(req,res)=>{
         const room =rooms.find((existingRoom)=>existingRoom.roomId===req.params.roomId)
         res.json({...room})
     })
     
-    //join room (find room details using room ID and add participant)
+    //join room for video call (find room details using room ID and add participant)
     app.post('/rooms/:roomId/join',(req,res)=>{
         const { params, body } = req;
         const roomIndex = rooms.findIndex(existingRooms => existingRooms.roomId === params.roomId);
@@ -43,7 +43,7 @@ module.exports=(app,rooms)=>{
 
     }) 
 
-    //join room from your teams
+    //join room from your teams 
     app.post('/joinRoom/:roomId',(req,res)=>{
         console.log(req.body)
         const { params, body } = req;
@@ -67,11 +67,12 @@ module.exports=(app,rooms)=>{
         }
     })
 
-    //send email to list of participants
+    //send email to list of participants for joining the video meet
     app.post('/api/send',(req,res)=>{
     
         var to=req.body.to.split(',');
     
+        //send to each one one by one
         for(var i=0;i<to.length;i++)
         {
             var options={
@@ -79,6 +80,7 @@ module.exports=(app,rooms)=>{
                 subject:"Link for meeting",
                 html:"<h2>"+req.body.from+"</h2><h3> sent you Joining Link for meeting </h3>"+"<h3 style='font-weight:bold'>"+req.body.url+"</h3>"
             }
+            //send mail
             transporter.sendMail(options,(error,info)=>{
                 if(error)
                 {

@@ -1,5 +1,6 @@
 const mongoose=require('mongoose')
 
+//store participants in each room
 const roomSchema=new mongoose.Schema({
     roomId:{
         type:String

@@ -9,9 +9,7 @@ const mongoose=require('mongoose')
 app.use(bodyParser.json())
 app.use(cors())
 
-
 const {Server} =require('socket.io')
-const { O_APPEND } = require('constants')
 const server=http.createServer(app)
 const io=new Server(server,{
     cors:{
@@ -27,11 +25,12 @@ const rooms=[]
 
 
 
-
+//connect to socket
 io.on('connect',(socket)=>{
     socket.emit('get:peerId')
     console.log('connected')
 
+    //request peer id
     socket.on('send:peerId',(peerId)=>{
         //console.log('lets see if it is set--',peerId)
         MapPeerIdWithSocket[socket.id]=peerId;
@@ -42,15 +41,15 @@ io.on('connect',(socket)=>{
         socket.join(roomId)
     })
 
+    //send message in video call
     socket.on('send',(data)=>{
         console.log('message sent-',data)
         socket.broadcast.emit('recieve-mess',data)
     })
 
-
-
+    //send message in room
     socket.on('send-message',(message,roomId,name)=>{
-        //console.log(message)
+        console.log('message sent-',data)
         socket.broadcast.emit('recieve-message',message,roomId,name)
     })
 

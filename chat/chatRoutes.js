@@ -5,7 +5,6 @@ module.exports=(app)=>{
     //save new message to database
     app.post('/newMess',(req,res)=>{
         const {roomId,name,mess,email}=req.body;
-
         //first find Object with roomId 
         Message.findOne({roomId})
             .then(data=>{
@@ -22,7 +21,7 @@ module.exports=(app)=>{
                             return res.status(200).json(success)
                         })
                         .catch(err=>{
-                            return res.status(400).json(err)
+                            return res.status(401).json(err)
                         })
                 }
                 else
@@ -60,7 +59,7 @@ module.exports=(app)=>{
             })
             .catch(err=>{
                 console.log(err)
-                return res.status(400).json(err)
+                return res.status(404).json(err)
             })
     })
 

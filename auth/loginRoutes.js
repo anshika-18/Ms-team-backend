@@ -1,6 +1,6 @@
 require('dotenv').config()
-const User=require('./userModel')
 const bcrypt=require('bcryptjs')
+const User=require('./model')
 
 module.exports=(app)=>{
 
@@ -8,25 +8,27 @@ module.exports=(app)=>{
     app.post('/api/auth/login',(req,res)=>{
         console.log(req.body)
         const {email,password}=req.body
+        
         if(!email||!password)
             return res.status(400).json({msg:"please enter all details..."})
 
+        //find by email
         User.findOne({email})
-            .then(user=>{
-                if(!user)
-                    return res.status(400).json({msg:"user does not exist.Please register before You login.."})
+            .then(data=>{
+                if(!data)
+                    return res.status(401).json({msg:"user does not exist.Please register before You login.."})
 
                 //compare password wheater it is valid or not
-                bcrypt.compare(password,user.password)
+                bcrypt.compare(password,data.password)
                     .then(isMatch=>{
                         if(!isMatch)
-                            return  res.status(400).json({msg:"Invalid User"})
+                            return  res.status(401).json({msg:"Invalid Password"})
                         
                         return res.status(200).json({
                             user:{
-                                id:user.id,
-                                name:user.name,
-                                email:user.email
+                                id:data.id,
+                                name:data.name,
+                                email:data.email
                             }
                         })
                     })
@@ -35,7 +37,7 @@ module.exports=(app)=>{
                     })
             })
             .catch(err=>{
-                return res.status(500).json(err)
+                return res.status(404).json(err)
             })
     })
 }

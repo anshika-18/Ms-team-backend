@@ -1,5 +1,6 @@
 const mongoose=require('mongoose')
 
+//save data collected from feedback
 const feedback=new mongoose.Schema({
         email:{
                 type:String
@@ -9,4 +10,4 @@ const feedback=new mongoose.Schema({
         }
 })
 
-module.exports=mongoose.model('feedback',feedback)
+module.exports=mongoose.model('feedback',feedback);

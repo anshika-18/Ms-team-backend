@@ -1,6 +1,7 @@
 const feedback=require('./schema')
 
 module.exports=(app)=>{
+        //send feedback
         app.post('/feedback',(req,res)=>{
                 const {email,rating}=req.body
                 console.log(req.body)

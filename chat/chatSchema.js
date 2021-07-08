@@ -1,6 +1,7 @@
 const mongoose=require('mongoose')
 const Schema=mongoose.Schema
 
+//store messages of each room
 const chatSchema=new Schema({
     roomId:{
         type:String

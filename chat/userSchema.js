@@ -1,5 +1,6 @@
 const mongoose=require('mongoose')
 
+//store details of each user about which rooms user is a part of
 const userSchema=new mongoose.Schema({
     name:{
         type:String

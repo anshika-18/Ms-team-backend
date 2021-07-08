@@ -10,66 +10,65 @@ module.exports=(app)=>{
         const user=new Room({
             roomId,
             name:roomname,
-            participants:[
-                {
+            participants:[{
                     email,
                     name
-                }
-            ]
+                }]
         })
         user.save()
             .then(data=>{
                 //check if participant who created this room is a new one
                 Participant.findOne({email})
-                        .then((data)=>{
-                            if(data)
+                        .then((user)=>{
+                            if(user)
                             {
-                                data.rooms.push({
+                                user.rooms.push({
                                     roomId,
                                     name:roomname
                                 })
-                                data.save()
+                                user.save()
                                     .then((success)=>{
-                                        return res.json(success)
+                                        return res.status(200).json(success)
                                     })
                                     .catch(err=>{
-                                        return res.json(err)
+                                        return res.status(400).json(err)
                                     })
                             }
                             else
                             {
                                  //if new then add this user to participant array
-                                const newParti=new Participant({
+                                const newUser=new Participant({
                                     name,
                                     email,
-                                    rooms:[
-                                        {
+                                    rooms:[{
                                             roomId,
                                             name:roomname
-                                        }
-                                    ]
+                                        }]
                                 })
-                                newParti.save()
+                                newUser.save()
                                         .then(success=>{
-                                            return res.json(success)
+                                            return res.status(200).json(success)
                                         })
                                         .catch(err=>{
-                                            return res.json(err)
+                                            return res.status(400).json(err)
                                         })
                             }
                         })
                         .catch(err=>{
-                            return res.json(err)
+                            return res.status(404).json(err)
                         })
                // return res.status(200).json(data)
             })
             .catch(err=>{
-                res.json(err)
+                res.status(404).json(err)
             })
     })
 
+    // Join room 
     app.post('/join/newRoom',(req,res)=>{
+        //console.log(req.body)
         const {name,email,roomId}=req.body;
+
         Room.findOne({roomId})
             .then(room=>{
                 const roomname=room.name
@@ -147,25 +146,27 @@ module.exports=(app)=>{
             })
     })
 
+    //fetch which the user is part of
     app.get('/personDetails/:email',(req,res)=>{
         const {email}=req.params
         Participant.findOne({email})
                     .then(data=>{
-                        return res.json(data)
+                        return res.status(200).json(data)
                     })
                     .catch(err=>{
-                        res.json(err)
+                        res.status(400).json(err)
                     })
     })
 
+    //fetch the details of room
     app.get('/roomDetails/:roomId',(req,res)=>{
         const {roomId}=req.params
         Room.findOne({roomId}) 
             .then(data=>{
-                return res.json(data)
+                return res.status(200).json(data)
             })
             .catch(err=>{
-                res.json(err)
+                res.status(400).json(err)
             })
     })
 }

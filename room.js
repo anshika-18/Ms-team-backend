@@ -6,6 +6,7 @@ class Room {
     author=null
     sharer=null
 
+    //initialization
     constructor(body)
     {
         if(body.roomId)
@@ -20,6 +21,7 @@ class Room {
         this.participants.push(participant)
     }
 
+    //remove participant on disconnect
     removeParticipants=(participantId)=>{
         console.log('remove')
         let i=this.participants.findIndex(
@@ -29,6 +31,7 @@ class Room {
             this.participants.splice(i,1)
     }
 
+    //get details of room
     getInfo = () => ({
         participants: this.participants,
         roomId: this.roomId,
