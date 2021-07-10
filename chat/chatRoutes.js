@@ -50,7 +50,7 @@ module.exports=(app)=>{
             })
     })
 
-    //get all message of roomId
+    //get all message of room
     app.get('/allMess/:roomId',(req,res)=>{
         const {roomId}=req.params
         Message.findOne({roomId})

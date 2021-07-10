@@ -7,14 +7,14 @@ module.exports=(app)=>{
     //login to ms-team
     app.post('/api/auth/login',(req,res)=>{
         console.log(req.body)
-        const {email,password}=req.body
-        
+        const {email,password}=req.body;
+        //if all fields are not provided
         if(!email||!password)
             return res.status(400).json({msg:"please enter all details..."})
-
         //find by email
         User.findOne({email})
             .then(data=>{
+                //not yet registered
                 if(!data)
                     return res.status(401).json({msg:"user does not exist.Please register before You login.."})
 
@@ -22,7 +22,7 @@ module.exports=(app)=>{
                 bcrypt.compare(password,data.password)
                     .then(isMatch=>{
                         if(!isMatch)
-                            return  res.status(401).json({msg:"Invalid Password"})
+                            return res.status(401).json({msg:"Invalid Password"})
                         
                         return res.status(200).json({
                             user:{

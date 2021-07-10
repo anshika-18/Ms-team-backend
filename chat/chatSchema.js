@@ -15,10 +15,6 @@ const chatSchema=new Schema({
         },
         mess:{
             type:String
-        },
-        time:{
-            type:Date,
-            default:mongoose.now()
         }
     }]
 })

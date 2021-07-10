@@ -11,11 +11,11 @@ module.exports=(app,rooms)=>{
 
     //create room for video call
     app.post('/rooms',(req,res)=>{
-        console.log(req.body)
+        //console.log(req.body)
         const newRoom=new Room(req.body)
         console.log(newRoom)
         rooms.push(newRoom)
-        res.json({
+        return res.json({
             roomId:newRoom.roomId
         })
     })
@@ -23,7 +23,7 @@ module.exports=(app,rooms)=>{
     //get details of room (roomId)
     app.get('/rooms/:roomId',(req,res)=>{
         const room =rooms.find((existingRoom)=>existingRoom.roomId===req.params.roomId)
-        res.json({...room})
+        return res.json({...room})
     })
     
     //join room for video call (find room details using room ID and add participant)
@@ -31,14 +31,14 @@ module.exports=(app,rooms)=>{
         const { params, body } = req;
         const roomIndex = rooms.findIndex(existingRooms => existingRooms.roomId === params.roomId);
         let room = null;
-        console.log('roomIndex = ',roomIndex)
-        console.log(req.body)
+        //console.log('roomIndex = ',roomIndex)
+        //console.log(req.body)
         if (roomIndex > -1) {
             room = rooms[roomIndex]
             room.addParticipants(body.participant);
             rooms[roomIndex] = room;
             console.log(room.getInfo())
-            res.json({ ...room.getInfo() })
+            return res.json({ ...room.getInfo() })
         }
 
     }) 
@@ -54,14 +54,14 @@ module.exports=(app,rooms)=>{
             room = rooms[roomIndex]
             room.addParticipants(body.data);
             rooms[roomIndex] = room;
-            res.json({ ...room.getInfo() })
+            return res.json({ ...room.getInfo() })
         }
         else
         {
             const newRoom=new Room(req.body.author)
             newRoom.addParticipants(body.data);
             rooms.push(newRoom)
-            res.json({
+            return res.json({
                 roomId:newRoom.roomId
             })
         }

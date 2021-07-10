@@ -1,7 +1,7 @@
 const feedback=require('./schema')
 
 module.exports=(app)=>{
-        //send feedback
+        //submit feedback
         app.post('/feedback',(req,res)=>{
                 const {email,rating}=req.body
                 console.log(req.body)
@@ -11,10 +11,10 @@ module.exports=(app)=>{
                 })
                 newData.save()
                         .then(user=>{
-                                res.status(200).json(user)
+                                return res.status(200).json(user)
                         })
                         .catch((err)=>{
-                                res.status(400).json(err)
+                                return res.status(400).json(err)
                         })
         })
 }
