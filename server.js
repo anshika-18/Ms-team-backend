@@ -43,13 +43,13 @@ io.on('connect',(socket)=>{
 
     //send message in video call
     socket.on('send',(data)=>{
-        console.log('message sent-',data)
+        //console.log('message sent-',data)
         socket.broadcast.emit('recieve-mess',data)
     })
 
     //send message in room
     socket.on('send-message',(message,roomId,name)=>{
-        console.log('message sent-',data)
+        //console.log('message sent-',message)
         socket.broadcast.emit('recieve-message',message,roomId,name)
     })
 
