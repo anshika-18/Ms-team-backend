@@ -176,7 +176,6 @@ module.exports=(app)=>{
             })
     })
 
-    /*
     app.put('/rooms/leave',(req,res)=>{
         const {roomId,email}=req.body;
         Room.findOne({roomId})
@@ -225,7 +224,6 @@ module.exports=(app)=>{
                 return res.status(400).json(err)
             })
     })
-    */
 
 }
 
