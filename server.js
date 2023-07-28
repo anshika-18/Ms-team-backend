@@ -9,9 +9,9 @@ const mongoose = require("mongoose");
 app.use(bodyParser.json());
 app.use(cors());
 
-const { Server } = require("socket.io");
-const server = http.Server(app);
-const io = new Server(server, {
+const serverIO = require("socket.io");
+const server = http.createServer(app);
+const io = serverIO(server, {
   path: "/anshika",
   cors: {
     origin: "*",
