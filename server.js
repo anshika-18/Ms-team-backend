@@ -10,13 +10,15 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const { Server } = require("socket.io");
-const server = http.createServer(app);
-const io = new Server(server, {
-  path: "/anshika",
-  cors: {
-    origin: "*",
-  },
-});
+const server = http.Server(app);
+const io = Server(server);
+// const io = new Server(server, {
+//   path: "/anshika",
+//   cors: {
+//     origin: "*",
+
+//   },
+// });
 
 //store peerId and socketId
 const MapPeerIdWithSocket = {};
