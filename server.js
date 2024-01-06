@@ -12,7 +12,7 @@ app.use(cors());
 const serverIO = require("socket.io");
 const server = http.createServer(app);
 const io = serverIO(server, {
-  path: "/anshika",
+  transports: ["websocket", "polling"],
   cors: {
     origin: "*",
   },
@@ -25,7 +25,7 @@ const MapPeerIdWithSocket = {};
 const rooms = [];
 
 //connect to socket
-io.on("connect", (socket) => {
+io.on("connection", (socket) => {
   socket.emit("get:peerId");
   console.log("connected");
 
